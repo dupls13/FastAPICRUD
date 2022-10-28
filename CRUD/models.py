@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List 
 
 class Post(BaseModel):
     id: int 
@@ -6,9 +7,7 @@ class Post(BaseModel):
     content: str
     
 class PostItem(BaseModel):
-    title: str
-    content: str
-        
+    posts: List[Post]
+    
     class Config: 
-        title: str
-        content: str
+        orm_mode = True

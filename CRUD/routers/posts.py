@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, HTTPException, status 
 from .. import models 
 
 post_router = APIRouter()
@@ -15,7 +15,7 @@ async def add_post(post: models.Post):
 
 
 # Retrieve 
-@post_router.get("/post")
+@post_router.get("/post", status_code = 201)
 async def get_posts():
     return {
         "posts": post_list
@@ -28,9 +28,10 @@ async def get_specific_post(post_id: int = Path(..., title = "The ID fo the post
             return {
                 "post": post
             }
-    return {
-        'message': "Post with specific ID doesn't exist"
-    }
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail = "Post with ID {post_id} doesn't exist."
+    )
     
 
 
@@ -45,9 +46,11 @@ async def update_post(post_data: models.PostItem, post_id: int = Path(..., title
             return {
                 "message": "Post updated successfully"
             }
-    return {
-        "message": "Post with supplied ID doesn't exist"
-    }
+
+    raise HTTPException(
+        status_code = status.HTTP_404_NOT_FOUND,
+        detail = "Post with ID {post_id} doesn't exist."
+    )
 
 # Delete
 @post_router.delete("/post")
@@ -56,3 +59,8 @@ async def delete_all_posts():
     return {
         "message": "Posts deleted successfully"
     }
+    
+    raise HTTPException(
+        status_code = status.HTTP_404_NOT_FOUND,
+        detail = "Post with ID {post_id} doesn't exist."
+    )
